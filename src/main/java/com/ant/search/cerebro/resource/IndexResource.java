@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.ant.search.cerebro.domain.index.IndexSettings;
-import com.ant.search.cerebro.service.IndexSettingsService;
+import com.ant.search.cerebro.service.IndexingService;
 
 /**
  * @author sidhant.aggarwal
@@ -16,11 +16,12 @@ import com.ant.search.cerebro.service.IndexSettingsService;
 @RestController
 public class IndexResource {
     @Autowired
-    private IndexSettingsService indexSettingsService;
+    private IndexingService indexingService;
 
     @PostMapping ("/v1/index/{indexName}")
     public IndexSettings createIndex(@PathVariable final String indexName, @RequestBody @Valid final IndexSettings indexSettings) {
         indexSettings.setIndexName(indexName);
-        return indexSettingsService.create(indexSettings);
+        indexingService.initializeIndex(indexSettings);
+        return indexSettings;
     }
 }

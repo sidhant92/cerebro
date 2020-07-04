@@ -8,5 +8,5 @@ public enum DataType {
     String,
     Integer,
     Boolean,
-    Float
+    Double
 }

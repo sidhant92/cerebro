@@ -42,6 +42,11 @@ public class FieldConfig {
     @NotNull
     private ContainerType containerDataType;
 
+    @DynamoDBAttribute (attributeName = "tokenize")
+    @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.B)
+    @NotNull
+    private Boolean tokenize;
+
     @DynamoDBAttribute (attributeName = "properties")
     @Valid
     private List<FieldConfig> properties;
