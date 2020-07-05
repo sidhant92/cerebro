@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ant.search.cerebro.domain.index.FieldConfig;
 import com.ant.search.cerebro.domain.index.IndexSettings;
+import com.ant.search.cerebro.exception.Error;
 import com.ant.search.cerebro.util.JsonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class DocumentIndexer {
     private ObjectMapper objectMapper;
 
     public Map<String, Object> cleanAndValidateDocument(final Map<String, Object> document, final String indexName) {
-        final IndexSettings indexSettings = indexSettingsService.get(indexName).get();
+        final IndexSettings indexSettings = indexSettingsService.get(indexName).orElseThrow(Error.index_settings_not_found.getBuilder()::build);
         final Map<String, FieldConfig> flattenedFieldConfigMap = getFlattenedFieldConfigs(indexSettings);
         return cleanAndValidateDocument(document, flattenedFieldConfigMap);
     }
@@ -39,6 +40,7 @@ public class DocumentIndexer {
         filterExtraKeys(flattenedDocument, flattenedFieldConfig);
         if (!isDocumentValid(flattenedDocument, flattenedFieldConfig)) {
             log.error("Document is not Valid");
+            throw Error.document_not_valid.getBuilder().build();
         }
         return JsonUtils.unFlattenJson(flattenedDocument, objectMapper);
     }

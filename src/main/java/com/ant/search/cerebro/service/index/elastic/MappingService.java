@@ -54,6 +54,7 @@ public class MappingService {
     private Map<String, Object> getFieldProperties(final FieldConfig fieldConfig) {
         final Map<String, Object> fieldProperties = new HashMap<>();
         fieldProperties.put("type", mapToElasticDataType(fieldConfig.getDataType(), fieldConfig.getTokenize()));
+        fieldProperties.put("index", fieldConfig.getSearchable());
         return fieldProperties;
     }
 

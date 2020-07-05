@@ -1,5 +1,6 @@
 package com.ant.search.cerebro.domain.index;
 
+import java.util.Objects;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
@@ -9,6 +10,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTyped;
 import com.ant.search.cerebro.constant.IndexProvider;
+import com.ant.search.cerebro.domain.Mergeable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +28,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @DynamoDBDocument
 @DynamoDBTable (tableName = "index_settings")
-public class IndexSettings {
+public class IndexSettings implements Mergeable<IndexSettings> {
     @DynamoDBHashKey (attributeName = "index_name")
     @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
     private String indexName;
@@ -42,4 +44,26 @@ public class IndexSettings {
     @NotNull (message = "Index Provider is mandatory")
     @Valid
     private IndexProvider indexProvider;
+
+    @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
+    private Long createdAt;
+
+    @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
+    private Long updatedAt;
+
+    public void prePersist() {
+        final long currentTime = System.currentTimeMillis();
+        this.createdAt = currentTime;
+        this.updatedAt = currentTime;
+    }
+
+    public void preUpdate() {
+        this.updatedAt = System.currentTimeMillis();
+    }
+
+    public void merge(final IndexSettings indexSettings) {
+        if (!Objects.isNull(indexSettings.getStorageSettings())) {
+            this.storageSettings = indexSettings.getStorageSettings();
+        }
+    }
 }

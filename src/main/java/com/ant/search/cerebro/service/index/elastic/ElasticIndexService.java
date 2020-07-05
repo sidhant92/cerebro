@@ -1,5 +1,6 @@
 package com.ant.search.cerebro.service.index.elastic;
 
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -46,6 +47,16 @@ public class ElasticIndexService implements IndexService {
         indexRequest.source(request.getDocument());
         try {
             elasticClient.index(indexRequest, RequestOptions.DEFAULT);
+        } catch (final Exception ex) {
+            log.error("Error in indexing document with message {}", ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteDocument(final String indexName, final String id) {
+        final DeleteRequest deleteRequest = new DeleteRequest(indexName, id);
+        try {
+            elasticClient.delete(deleteRequest, RequestOptions.DEFAULT);
         } catch (final Exception ex) {
             log.error("Error in indexing document with message {}", ex.getMessage());
         }

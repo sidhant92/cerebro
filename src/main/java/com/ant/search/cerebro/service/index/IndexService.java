@@ -11,4 +11,6 @@ public interface IndexService {
     void initializeIndex(final IndexSettings indexSettings);
 
     void addDocument(final AddDocumentRequest request);
+
+    void deleteDocument(final String indexName, final String id);
 }

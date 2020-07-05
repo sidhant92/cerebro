@@ -46,6 +46,10 @@ public class FieldConfig {
     @NotNull
     private Boolean tokenize;
 
+    @DynamoDBAttribute (attributeName = "searchable")
+    @NotNull
+    private Boolean searchable;
+
     @DynamoDBAttribute (attributeName = "properties")
     @Valid
     private List<FieldConfig> properties;
