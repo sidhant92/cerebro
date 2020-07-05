@@ -1,4 +1,4 @@
-package com.ant.search.cerebro.service;
+package com.ant.search.cerebro.service.index;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.ant.search.cerebro.domain.index.FieldConfig;
 import com.ant.search.cerebro.domain.index.IndexSettings;
 import com.ant.search.cerebro.exception.Error;
+import com.ant.search.cerebro.service.IndexSettingsService;
 import com.ant.search.cerebro.util.JsonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

@@ -13,7 +13,8 @@ import lombok.Getter;
 public enum Error {
     document_not_valid(AppException.builder().statusCode(400).header("Document not Valid").message("Document not Valid")),
     index_settings_not_found(AppException.builder().statusCode(404).header("Index Settings Not Found").message("Index Settings Not Found")),
-    index_already_present(AppException.builder().statusCode(400).header("Index Already Present").message("Index Already Present"));
+    index_already_present(AppException.builder().statusCode(400).header("Index Already Present").message("Index Already Present")),
+    document_not_found(AppException.builder().statusCode(404).header("Document Not Found").message("Document Not Found"));
 
     private AppException.AppExceptionBuilder builder;
 

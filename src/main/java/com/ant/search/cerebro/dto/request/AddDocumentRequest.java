@@ -1,4 +1,4 @@
-package com.ant.search.cerebro.dto;
+package com.ant.search.cerebro.dto.request;
 
 import java.util.Map;
 import javax.validation.constraints.NotBlank;

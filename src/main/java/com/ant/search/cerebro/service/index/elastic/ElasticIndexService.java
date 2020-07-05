@@ -8,7 +8,7 @@ import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ant.search.cerebro.domain.index.IndexSettings;
-import com.ant.search.cerebro.dto.AddDocumentRequest;
+import com.ant.search.cerebro.dto.request.AddDocumentRequest;
 import com.ant.search.cerebro.service.index.IndexService;
 import lombok.extern.slf4j.Slf4j;
 

@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.ant.search.cerebro.domain.index.IndexSettings;
-import com.ant.search.cerebro.dto.AddDocumentRequest;
+import com.ant.search.cerebro.dto.request.AddDocumentRequest;
 import com.ant.search.cerebro.exception.Error;
 import com.ant.search.cerebro.service.IndexSettingsService;
-import com.ant.search.cerebro.service.IndexingService;
+import com.ant.search.cerebro.service.index.IndexingService;
 
 /**
  * @author sidhant.aggarwal

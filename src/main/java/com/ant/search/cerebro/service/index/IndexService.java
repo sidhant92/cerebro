@@ -1,7 +1,7 @@
 package com.ant.search.cerebro.service.index;
 
 import com.ant.search.cerebro.domain.index.IndexSettings;
-import com.ant.search.cerebro.dto.AddDocumentRequest;
+import com.ant.search.cerebro.dto.request.AddDocumentRequest;
 
 /**
  * @author sidhant.aggarwal
