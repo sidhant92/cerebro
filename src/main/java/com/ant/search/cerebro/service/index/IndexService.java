@@ -1,6 +1,7 @@
 package com.ant.search.cerebro.service.index;
 
 import com.ant.search.cerebro.domain.index.IndexSettings;
+import com.ant.search.cerebro.dto.AddDocumentRequest;
 
 /**
  * @author sidhant.aggarwal
@@ -8,4 +9,6 @@ import com.ant.search.cerebro.domain.index.IndexSettings;
  */
 public interface IndexService {
     void initializeIndex(final IndexSettings indexSettings);
+
+    void addDocument(final AddDocumentRequest request);
 }

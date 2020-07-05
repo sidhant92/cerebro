@@ -59,13 +59,13 @@ public class MappingService {
 
     private String mapToElasticDataType(final DataType dataType, final Boolean tokenize) {
         switch (dataType) {
-            case String:
+            case string:
                 return tokenize ? "text" : "keyword";
-            case Integer:
+            case integer:
                 return "integer";
-            case Boolean:
+            case bool:
                 return "boolean";
-            case Double:
+            case decimal:
                 return "double";
             default:
                 return "text";
