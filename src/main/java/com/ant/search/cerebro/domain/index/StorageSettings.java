@@ -1,10 +1,17 @@
 package com.ant.search.cerebro.domain.index;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+import com.ant.search.cerebro.constant.AnalyzerType;
+import com.ant.search.cerebro.constant.DataType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,4 +33,40 @@ public class StorageSettings {
     @NotEmpty
     @Valid
     private List<FieldConfig> fields;
+
+    private Map<String, FieldConfig> flattenedFieldConfigMap;
+
+    public List<String> filterSearchableStringFields(final List<String> fields) {
+        return fields.stream().filter(field -> this.flattenedFieldConfigMap.containsKey(field) && this.flattenedFieldConfigMap.get(field)
+                                                                                                                              .getDataType() == DataType.string && this.flattenedFieldConfigMap
+                .get(field).getSearchable()).collect(Collectors.toList());
+    }
+
+    public void setFlattenedFieldConfigMap() {
+        final Map<String, FieldConfig> fieldConfigMap = new HashMap<>();
+        this.fields.forEach(fieldConfig -> {
+            if (Optional.ofNullable(fieldConfig.getProperties()).orElse(Collections.emptyList()).isEmpty()) {
+                fieldConfigMap.put(fieldConfig.getName(), fieldConfig);
+            } else {
+                final String prefix = fieldConfig.getName();
+                putNestedFieldConfigs(prefix, fieldConfig.getProperties(), fieldConfigMap);
+            }
+        });
+        this.flattenedFieldConfigMap = fieldConfigMap;
+    }
+
+    private void putNestedFieldConfigs(final String prefix, final List<FieldConfig> nestedFields, final Map<String, FieldConfig> fieldConfigMap) {
+        nestedFields.forEach(fieldConfig -> {
+            final String newPrefix = prefix + "." + fieldConfig.getName();
+            if (Optional.ofNullable(fieldConfig.getProperties()).orElse(Collections.emptyList()).isEmpty()) {
+                fieldConfigMap.put(newPrefix, fieldConfig);
+            } else {
+                putNestedFieldConfigs(newPrefix, fieldConfig.getProperties(), fieldConfigMap);
+            }
+        });
+    }
+
+    public AnalyzerType getAnalyzerType(final String field) {
+        return this.flattenedFieldConfigMap.get(field).getAnalyzer();
+    }
 }

@@ -1,10 +1,7 @@
 package com.ant.search.cerebro.service.index;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +29,7 @@ public class DocumentIndexer {
 
     public Map<String, Object> cleanAndValidateDocument(final Map<String, Object> document, final String indexName) {
         final IndexSettings indexSettings = indexSettingsService.get(indexName).orElseThrow(Error.index_settings_not_found.getBuilder()::build);
-        final Map<String, FieldConfig> flattenedFieldConfigMap = getFlattenedFieldConfigs(indexSettings);
+        final Map<String, FieldConfig> flattenedFieldConfigMap = indexSettings.getStorageSettings().getFlattenedFieldConfigMap();
         return cleanAndValidateDocument(document, flattenedFieldConfigMap);
     }
 
@@ -72,29 +69,5 @@ public class DocumentIndexer {
     private void filterExtraKeys(final Map<String, Object> document, final Map<String, FieldConfig> flattenedFieldConfig) {
         final Set<String> extraKeys = document.keySet().stream().filter(key -> !flattenedFieldConfig.containsKey(key)).collect(Collectors.toSet());
         extraKeys.forEach(document::remove);
-    }
-
-    public Map<String, FieldConfig> getFlattenedFieldConfigs(final IndexSettings indexSettings) {
-        final Map<String, FieldConfig> fieldConfigMap = new HashMap<>();
-        indexSettings.getStorageSettings().getFields().forEach(fieldConfig -> {
-            if (Optional.ofNullable(fieldConfig.getProperties()).orElse(Collections.emptyList()).isEmpty()) {
-                fieldConfigMap.put(fieldConfig.getName(), fieldConfig);
-            } else {
-                final String prefix = fieldConfig.getName();
-                putNestedFieldConfigs(prefix, fieldConfig.getProperties(), fieldConfigMap);
-            }
-        });
-        return fieldConfigMap;
-    }
-
-    private void putNestedFieldConfigs(final String prefix, final List<FieldConfig> nestedFields, final Map<String, FieldConfig> fieldConfigMap) {
-        nestedFields.forEach(fieldConfig -> {
-            final String newPrefix = prefix + "." + fieldConfig.getName();
-            if (Optional.ofNullable(fieldConfig.getProperties()).orElse(Collections.emptyList()).isEmpty()) {
-                fieldConfigMap.put(newPrefix, fieldConfig);
-            } else {
-                putNestedFieldConfigs(newPrefix, fieldConfig.getProperties(), fieldConfigMap);
-            }
-        });
     }
 }

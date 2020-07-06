@@ -55,10 +55,12 @@ public class IndexSettings implements Mergeable<IndexSettings> {
         final long currentTime = System.currentTimeMillis();
         this.createdAt = currentTime;
         this.updatedAt = currentTime;
+        this.getStorageSettings().setFlattenedFieldConfigMap();
     }
 
     public void preUpdate() {
         this.updatedAt = System.currentTimeMillis();
+        this.getStorageSettings().setFlattenedFieldConfigMap();
     }
 
     public void merge(final IndexSettings indexSettings) {

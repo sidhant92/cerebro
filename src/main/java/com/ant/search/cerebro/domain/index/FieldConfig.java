@@ -8,6 +8,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTyped;
+import com.ant.search.cerebro.constant.AnalyzerType;
 import com.ant.search.cerebro.constant.ContainerType;
 import com.ant.search.cerebro.constant.DataType;
 import lombok.AllArgsConstructor;
@@ -41,6 +42,11 @@ public class FieldConfig {
     @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
     @NotNull
     private ContainerType containerDataType;
+
+    @DynamoDBAttribute (attributeName = "analyzer")
+    @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
+    @NotNull
+    private AnalyzerType analyzer = AnalyzerType.standard;
 
     @DynamoDBAttribute (attributeName = "tokenize")
     @NotNull
