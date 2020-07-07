@@ -9,6 +9,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.PutMappingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.ant.search.cerebro.constant.DataType;
 import com.ant.search.cerebro.domain.index.FieldConfig;
@@ -24,6 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 public class MappingService {
     @Autowired
     private RestHighLevelClient elasticClient;
+
+    @Value ("${autocomplete.sub_field_suffix}")
+    private String autocompleteSubFieldSuffix;
 
     public void putMapping(final IndexSettings indexSettings) {
         final Map<String, Object> properties = getFieldMappings(indexSettings.getStorageSettings().getFields());
@@ -42,13 +46,27 @@ public class MappingService {
         fields.forEach(fieldConfig -> {
             if (Optional.ofNullable(fieldConfig.getProperties()).orElse(Collections.emptyList()).isEmpty()) {
                 final Map<String, Object> fieldLevelMapping = new HashMap<>(getFieldProperties(fieldConfig));
+                getAutocompleteSubField(fieldConfig, autocompleteSubFieldSuffix).ifPresent(field -> fieldLevelMapping.put("fields", field));
                 fieldMappings.put(fieldConfig.getName(), fieldLevelMapping);
             } else {
-                fieldMappings.put(fieldConfig.getName(), getFieldMappings(fieldConfig.getProperties()));
+                final Map<String, Object> fieldLevelMapping = getFieldMappings(fieldConfig.getProperties());
+                getAutocompleteSubField(fieldConfig, autocompleteSubFieldSuffix).ifPresent(field -> fieldLevelMapping.put("fields", field));
+                fieldMappings.put(fieldConfig.getName(), fieldLevelMapping);
             }
         });
         mappingData.put("properties", fieldMappings);
         return mappingData;
+    }
+
+    private Optional<Map<String, Object>> getAutocompleteSubField(final FieldConfig fieldConfig, final String autocompleteSubFieldSuffix) {
+        if (!fieldConfig.getPrefixSearchEnabled() || fieldConfig.getDataType() != DataType.string) {
+            return Optional.empty();
+        }
+        final Map<String, Object> fieldLevelMapping = new HashMap<>(getFieldProperties(fieldConfig));
+        fieldLevelMapping.put("analyzer", CustomAnalyzers.AUTOCOMPLETE_ANALYZER_NAME);
+        final Map<String, Object> autocompleteFieldMap = new HashMap<>();
+        autocompleteFieldMap.put(autocompleteSubFieldSuffix, fieldLevelMapping);
+        return Optional.of(autocompleteFieldMap);
     }
 
     private Map<String, Object> getFieldProperties(final FieldConfig fieldConfig) {

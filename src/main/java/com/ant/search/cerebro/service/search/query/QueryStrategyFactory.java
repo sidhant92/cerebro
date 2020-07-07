@@ -19,12 +19,16 @@ public class QueryStrategyFactory {
     @Autowired
     private AnyMatchQueryStrategy anyMatchQueryStrategy;
 
+    @Autowired
+    private PrefixLastQueryStrategy prefixLastQueryStrategy;
+
     private final Map<QueryStrategyType, QueryStrategy> queryStrategyMap = new HashMap<>();
 
     @PostConstruct
     public void register() {
         queryStrategyMap.put(QueryStrategyType.all_match, allMatchQueryStrategy);
         queryStrategyMap.put(QueryStrategyType.any_match, anyMatchQueryStrategy);
+        queryStrategyMap.put(QueryStrategyType.prefix_last, prefixLastQueryStrategy);
     }
 
     public QueryStrategy getQueryStrategy(final QueryStrategyType queryStrategyType) {

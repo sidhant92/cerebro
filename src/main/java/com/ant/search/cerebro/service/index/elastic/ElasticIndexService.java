@@ -1,5 +1,6 @@
 package com.ant.search.cerebro.service.index.elastic;
 
+import java.util.Map;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ant.search.cerebro.domain.index.IndexSettings;
 import com.ant.search.cerebro.dto.request.AddDocumentRequest;
+import com.ant.search.cerebro.exception.Error;
 import com.ant.search.cerebro.service.index.IndexService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,14 +27,22 @@ public class ElasticIndexService implements IndexService {
     @Autowired
     private RestHighLevelClient elasticClient;
 
+    @Autowired
+    private CustomAnalyzers customAnalyzers;
+
     private void createIndex(final String indexName) {
         final CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName);
-        //createIndexRequest.settings(getIndexSettings());
+        createIndexRequest.settings(getIndexSettings());
         try {
             elasticClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
         } catch (final Exception ex) {
             log.error("Error in creating index with message {}", ex.getMessage());
+            throw Error.unknown_error_occurred.getBuilder().build();
         }
+    }
+
+    private Map<String, Object> getIndexSettings() {
+        return customAnalyzers.getCustomAnalyzers();
     }
 
     @Override
@@ -49,6 +59,7 @@ public class ElasticIndexService implements IndexService {
             elasticClient.index(indexRequest, RequestOptions.DEFAULT);
         } catch (final Exception ex) {
             log.error("Error in indexing document with message {}", ex.getMessage());
+            throw Error.unknown_error_occurred.getBuilder().build();
         }
     }
 

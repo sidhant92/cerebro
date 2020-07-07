@@ -56,6 +56,10 @@ public class FieldConfig {
     @NotNull
     private Boolean searchable;
 
+    @DynamoDBAttribute (attributeName = "prefix_search_enabled")
+    @NotNull
+    private Boolean prefixSearchEnabled = true;
+
     @DynamoDBAttribute (attributeName = "properties")
     @Valid
     private List<FieldConfig> properties;

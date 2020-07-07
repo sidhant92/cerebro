@@ -6,5 +6,6 @@ package com.ant.search.cerebro.constant;
  */
 public enum  QueryStrategyType {
     all_match,
-    any_match
+    any_match,
+    prefix_last
 }
