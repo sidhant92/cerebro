@@ -31,6 +31,8 @@ public class SearchRequest {
     @Min (value = 1)
     private Long pageNo = 1L;
 
+    private String filters;
+
     private List<String> queryFields = Collections.emptyList();
 
     private QueryStrategyType queryStrategy = QueryStrategyType.all_match;

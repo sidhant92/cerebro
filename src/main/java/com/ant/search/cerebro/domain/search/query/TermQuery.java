@@ -17,7 +17,7 @@ import lombok.Setter;
 public class TermQuery extends Query {
     private final String field;
 
-    private final String value;
+    private final Object value;
 
     @Override
     public QueryType getQueryType() {

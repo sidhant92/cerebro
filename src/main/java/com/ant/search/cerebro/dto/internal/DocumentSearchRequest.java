@@ -1,5 +1,6 @@
 package com.ant.search.cerebro.dto.internal;
 
+import com.ant.search.cerebro.domain.search.query.BoolQuery;
 import com.ant.search.cerebro.domain.search.query.Query;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,4 +25,6 @@ public class DocumentSearchRequest {
     private Long offset;
 
     private Long limit;
+
+    private BoolQuery filters;
 }

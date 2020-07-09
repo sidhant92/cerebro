@@ -10,6 +10,7 @@ import com.ant.search.cerebro.domain.index.FieldConfig;
 import com.ant.search.cerebro.domain.index.IndexSettings;
 import com.ant.search.cerebro.exception.Error;
 import com.ant.search.cerebro.service.IndexSettingsService;
+import com.ant.search.cerebro.service.datatype.PrimitiveDataTypeFactory;
 import com.ant.search.cerebro.util.JsonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,9 @@ public class DocumentIndexer {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private PrimitiveDataTypeFactory primitiveDataTypeFactory;
 
     public Map<String, Object> cleanAndValidateDocument(final Map<String, Object> document, final String indexName) {
         final IndexSettings indexSettings = indexSettingsService.get(indexName).orElseThrow(Error.index_settings_not_found.getBuilder()::build);
@@ -50,10 +54,11 @@ public class DocumentIndexer {
             final Object value = document.get(key);
             switch (fieldConfig.getContainerDataType()) {
                 case primitive:
-                    isValid = fieldConfig.getDataType().isValid(value);
+                    isValid = primitiveDataTypeFactory.getDataType(fieldConfig.getDataType()).isValid(value);
                     break;
                 case list:
-                    isValid = isObjectList(value) && ((List) value).stream().allMatch(v -> fieldConfig.getDataType().isValid(v));
+                    isValid = isObjectList(value) && ((List) value).stream().allMatch(
+                            v -> primitiveDataTypeFactory.getDataType(fieldConfig.getDataType()).isValid(v));
                     break;
                 default:
                     isValid = false;

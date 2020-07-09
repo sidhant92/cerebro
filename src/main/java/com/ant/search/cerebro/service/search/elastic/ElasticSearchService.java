@@ -3,6 +3,7 @@ package com.ant.search.cerebro.service.search.elastic;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.elasticsearch.action.get.GetRequest;
@@ -11,10 +12,14 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.ant.search.cerebro.domain.search.query.BoolQuery;
 import com.ant.search.cerebro.dto.internal.DocumentSearchRequest;
 import com.ant.search.cerebro.dto.response.DocumentSearchResponse;
 import com.ant.search.cerebro.exception.Error;
@@ -64,8 +69,20 @@ public class ElasticSearchService implements SearchService {
     private SearchSourceBuilder makeSearchQuery(final DocumentSearchRequest request) {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         setQuery(request, searchSourceBuilder);
+        setFilters(searchSourceBuilder, request.getFilters());
         setPagination(request, searchSourceBuilder);
         return searchSourceBuilder;
+    }
+
+    private void setFilters(final SearchSourceBuilder searchSourceBuilder, final BoolQuery boolQuery) {
+        if (!Objects.isNull(boolQuery)) {
+            final QueryBuilder query = searchSourceBuilder.query();
+            final QueryBuilder filter = queryAdaptor.getElasticQuery(boolQuery);
+            final BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+            boolQueryBuilder.must(query);
+            boolQueryBuilder.filter(filter);
+            searchSourceBuilder.query(boolQueryBuilder);
+        }
     }
 
     private void setQuery(final DocumentSearchRequest request, final SearchSourceBuilder searchSourceBuilder) {
