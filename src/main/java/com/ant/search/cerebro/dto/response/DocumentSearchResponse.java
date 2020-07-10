@@ -23,4 +23,6 @@ public class DocumentSearchResponse {
     private Boolean nextPage;
 
     private List<Map<String, Object>> documents;
+
+    private Map<String, Map<String, Long>> facets;
 }

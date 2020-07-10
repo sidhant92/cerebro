@@ -52,7 +52,9 @@ public class DocumentSearchService {
         final Query query = queryStrategyFactory.getQueryStrategy(request.getQueryStrategy()).getQuery(request, indexSettings.getStorageSettings());
         final DocumentSearchRequest documentSearchRequest = DocumentSearchRequest.builder().limit(limit).offset(offset)
                                                                                  .indexName(request.getIndexName()).query(query)
-                                                                                 .filters(filters.orElse(null)).build();
+                                                                                 .filters(filters.orElse(null))
+                                                                                 .computeFacets(request.getReturnFacets())
+                                                                                 .facetFields(request.getFacetFields()).build();
         return searchServiceFactory.getIndexService(indexSettings.getIndexProvider()).searchDocuments(documentSearchRequest);
     }
 }

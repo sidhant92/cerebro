@@ -39,6 +39,12 @@ public class IndexSettings implements Mergeable<IndexSettings> {
     @Valid
     private StorageSettings storageSettings;
 
+    @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.M)
+    @DynamoDBAttribute (attributeName = "search_settings")
+    @NotNull (message = "Search Settings are mandatory")
+    @Valid
+    private SearchSettings searchSettings;
+
     @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
     @DynamoDBAttribute (attributeName = "index_provider")
     @NotNull (message = "Index Provider is mandatory")
@@ -66,6 +72,9 @@ public class IndexSettings implements Mergeable<IndexSettings> {
     public void merge(final IndexSettings indexSettings) {
         if (!Objects.isNull(indexSettings.getStorageSettings())) {
             this.storageSettings = indexSettings.getStorageSettings();
+        }
+        if (!Objects.isNull(indexSettings.getSearchSettings())) {
+            this.searchSettings = indexSettings.getSearchSettings();
         }
     }
 }

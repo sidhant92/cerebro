@@ -35,5 +35,9 @@ public class SearchRequest {
 
     private List<String> queryFields = Collections.emptyList();
 
+    private List<String> facetFields = Collections.emptyList();
+
+    private Boolean returnFacets = false;
+
     private QueryStrategyType queryStrategy = QueryStrategyType.all_match;
 }

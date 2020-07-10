@@ -1,5 +1,6 @@
 package com.ant.search.cerebro.dto.internal;
 
+import java.util.List;
 import com.ant.search.cerebro.domain.search.query.BoolQuery;
 import com.ant.search.cerebro.domain.search.query.Query;
 import lombok.AllArgsConstructor;
@@ -27,4 +28,8 @@ public class DocumentSearchRequest {
     private Long limit;
 
     private BoolQuery filters;
+
+    private Boolean computeFacets;
+
+    private List<String> facetFields;
 }

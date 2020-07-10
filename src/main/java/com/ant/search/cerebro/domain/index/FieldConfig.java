@@ -60,6 +60,10 @@ public class FieldConfig {
     @NotNull
     private Boolean prefixSearchEnabled = true;
 
+    @DynamoDBAttribute (attributeName = "facet_required")
+    @NotNull
+    private Boolean facetRequired = false;
+
     @DynamoDBAttribute (attributeName = "properties")
     @Valid
     private List<FieldConfig> properties;
