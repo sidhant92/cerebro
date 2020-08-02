@@ -4,8 +4,8 @@ plugins {
 	id 'java'
 }
 
-group = 'com.ant.search'
-version = '0.0.1-SNAPSHOT'
+group = 'com.github.sidhant92'
+version = '1.0.0'
 sourceCompatibility = '1.8'
 
 repositories {
@@ -21,6 +21,7 @@ dependencies {
 	implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.6.0'
 	implementation 'com.github.wnameless.json:json-flattener:0.9.0'
 	implementation "com.google.guava:guava:29.0-jre"
+	implementation "com.github.ben-manes.caffeine:caffeine:2.7.0"
 	implementation "com.github.sidhant92:boolparser:1.0.1"
 
 	compileOnly 'org.projectlombok:lombok'
