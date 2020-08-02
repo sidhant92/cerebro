@@ -1,6 +1,9 @@
 package com.ant.search.cerebro.domain.index;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,6 +14,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTyped;
 import com.ant.search.cerebro.constant.AnalyzerType;
 import com.ant.search.cerebro.constant.ContainerType;
 import com.ant.search.cerebro.constant.DataType;
+import com.ant.search.cerebro.domain.Mergeable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,7 +31,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamoDBDocument
-public class FieldConfig {
+public class FieldConfig implements Mergeable<FieldConfig> {
     @DynamoDBAttribute (attributeName = "name")
     @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
     @NotBlank
@@ -46,7 +50,7 @@ public class FieldConfig {
     @DynamoDBAttribute (attributeName = "analyzer")
     @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
     @NotNull
-    private AnalyzerType analyzer = AnalyzerType.standard;
+    private AnalyzerType analyzer = AnalyzerType.STANDARD;
 
     @DynamoDBAttribute (attributeName = "tokenize")
     @NotNull
@@ -67,4 +71,33 @@ public class FieldConfig {
     @DynamoDBAttribute (attributeName = "properties")
     @Valid
     private List<FieldConfig> properties;
+
+    @Override
+    public void merge(final FieldConfig fieldConfig) {
+        if (!Objects.isNull(fieldConfig.getAnalyzer())) {
+            this.analyzer = fieldConfig.getAnalyzer();
+        }
+        if (!Objects.isNull(fieldConfig.getTokenize())) {
+            this.tokenize = fieldConfig.getTokenize();
+        }
+        if (!Objects.isNull(fieldConfig.getSearchable())) {
+            this.searchable = fieldConfig.getSearchable();
+        }
+        if (!Objects.isNull(fieldConfig.getPrefixSearchEnabled())) {
+            this.prefixSearchEnabled = fieldConfig.getPrefixSearchEnabled();
+        }
+        if (!Objects.isNull(fieldConfig.getFacetRequired())) {
+            this.facetRequired = fieldConfig.getFacetRequired();
+        }
+        if (!Objects.isNull(fieldConfig.getProperties())) {
+            final Map<String, FieldConfig> existingProperties = this.getProperties().stream().collect(Collectors.toMap(FieldConfig::getName, a -> a));
+            fieldConfig.getProperties().forEach(property -> {
+                if (existingProperties.containsKey(property.getName())) {
+                    existingProperties.get(property.getName()).merge(property);
+                } else {
+                    this.properties.add(property);
+                }
+            });
+        }
+    }
 }

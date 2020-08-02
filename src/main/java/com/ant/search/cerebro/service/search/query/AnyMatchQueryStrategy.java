@@ -23,7 +23,7 @@ public class AnyMatchQueryStrategy extends QueryStrategy {
 
     @Override
     public QueryStrategyType getQueryStrategyType() {
-        return QueryStrategyType.any_match;
+        return QueryStrategyType.ANY_MATCH;
     }
 
     @Override
@@ -36,8 +36,8 @@ public class AnyMatchQueryStrategy extends QueryStrategy {
             final Analyzer analyzer = analyzerFactory.getAnalyzer(storageSettings.getAnalyzerType(field));
             final BoolQuery innerBoolQuery = new BoolQuery();
             getTermQueriesFromTokens(analyzer, searchRequest.getQuery(), field)
-                    .forEach(termQuery -> innerBoolQuery.addQuery(termQuery, QueryClause.should));
-            boolQuery.addQuery(innerBoolQuery, QueryClause.should);
+                    .forEach(termQuery -> innerBoolQuery.addQuery(termQuery, QueryClause.SHOULD));
+            boolQuery.addQuery(innerBoolQuery, QueryClause.SHOULD);
         });
 
         return boolQuery;

@@ -24,13 +24,14 @@ public class IndexingService {
     private DocumentIndexer documentIndexer;
 
     public IndexSettings initializeIndex(final IndexSettings indexSettings) {
-        final IndexSettings createdIndexingSettings = indexSettingsService.create(indexSettings);
         indexServiceFactory.getIndexService(indexSettings.getIndexProvider()).initializeIndex(indexSettings);
-        return createdIndexingSettings;
+        return indexSettingsService.create(indexSettings);
     }
 
     public IndexSettings updateIndexSettings(final IndexSettings indexSettings) {
-        return indexSettingsService.update(indexSettings);
+        final IndexSettings updatedIndexingSettings = indexSettingsService.update(indexSettings);
+        indexServiceFactory.getIndexService(indexSettings.getIndexProvider()).updateIndex(updatedIndexingSettings);
+        return updatedIndexingSettings;
     }
 
     public Map<String, Object> addDocument(final AddDocumentRequest request) {

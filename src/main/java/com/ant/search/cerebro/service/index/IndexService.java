@@ -10,6 +10,8 @@ import com.ant.search.cerebro.dto.request.AddDocumentRequest;
 public interface IndexService {
     void initializeIndex(final IndexSettings indexSettings);
 
+    void updateIndex(final IndexSettings indexSettings);
+
     void addDocument(final AddDocumentRequest request);
 
     void deleteDocument(final String indexName, final String id);

@@ -1,5 +1,6 @@
 package com.ant.search.cerebro.service.index.elastic;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -30,9 +31,9 @@ public class ElasticIndexService implements IndexService {
     @Autowired
     private CustomAnalyzers customAnalyzers;
 
-    private void createIndex(final String indexName) {
-        final CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName);
-        createIndexRequest.settings(getIndexSettings());
+    private void createIndex(final IndexSettings indexSettings) {
+        final CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexSettings.getIndexName());
+        createIndexRequest.settings(getIndexSettings(indexSettings));
         try {
             elasticClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
         } catch (final Exception ex) {
@@ -41,13 +42,27 @@ public class ElasticIndexService implements IndexService {
         }
     }
 
-    private Map<String, Object> getIndexSettings() {
-        return customAnalyzers.getCustomAnalyzers();
+    private Map<String, Object> getIndexSettings(final IndexSettings indexSettings) {
+        final Map<String, Object> settings = new HashMap<>(customAnalyzers.getCustomAnalyzers());
+        settings.put("index", getCoreIndexSettings(indexSettings));
+        return settings;
+    }
+
+    private Map<String, Object> getCoreIndexSettings(final IndexSettings indexSettings) {
+        final Map<String, Object> settings = new HashMap<>();
+        settings.put("number_of_shards", indexSettings.getNoOfShards());
+        settings.put("number_of_replicas", indexSettings.getNoOfReplicas());
+        return settings;
     }
 
     @Override
     public void initializeIndex(final IndexSettings indexSettings) {
-        createIndex(indexSettings.getIndexName());
+        createIndex(indexSettings);
+        mappingService.putMapping(indexSettings);
+    }
+
+    @Override
+    public void updateIndex(final IndexSettings indexSettings) {
         mappingService.putMapping(indexSettings);
     }
 

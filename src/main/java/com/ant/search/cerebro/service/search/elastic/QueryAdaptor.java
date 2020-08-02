@@ -20,10 +20,10 @@ import com.ant.search.cerebro.exception.Error;
 public class QueryAdaptor {
     public QueryBuilder getElasticQuery(final Query query) {
         switch (query.getQueryType()) {
-            case term:
-            case range:
+            case TERM:
+            case RANGE:
                 return getPrimitiveQuery(query);
-            case bool:
+            case BOOL:
                 return getBooleanQuery(query);
             default:
                 throw Error.unknown_query_type.getBuilder().build();
@@ -50,10 +50,10 @@ public class QueryAdaptor {
 
     private QueryBuilder getPrimitiveQuery(final Query query) {
         switch (query.getQueryType()) {
-            case term:
+            case TERM:
                 final TermQuery termQuery = (TermQuery) query;
                 return QueryBuilders.termQuery(termQuery.getField(), termQuery.getValue());
-            case range:
+            case RANGE:
                 return rangeQueryConverter((RangeQuery) query);
             default:
                 throw new RuntimeException();

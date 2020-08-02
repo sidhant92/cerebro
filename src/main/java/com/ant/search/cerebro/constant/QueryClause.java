@@ -5,7 +5,8 @@ package com.ant.search.cerebro.constant;
  * @since 06/07/2020
  */
 public enum QueryClause {
-    must,
-    should,
-    must_not
+    MUST,
+    SHOULD,
+    MUST_NOT
 }
+

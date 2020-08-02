@@ -21,7 +21,7 @@ public class SearchServiceFactory {
 
     @PostConstruct
     public void register() {
-        searchServiceMap.put(IndexProvider.elastic, elasticSearchService);
+        searchServiceMap.put(IndexProvider.ELASTIC, elasticSearchService);
     }
 
     public SearchService getIndexService(final IndexProvider indexProvider) {

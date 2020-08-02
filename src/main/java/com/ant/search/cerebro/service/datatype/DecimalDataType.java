@@ -12,7 +12,7 @@ import com.ant.search.cerebro.constant.DataType;
 public class DecimalDataType extends PrimitiveAbstractType {
     @Override
     public DataType getType() {
-        return DataType.decimal;
+        return DataType.DECIMAL;
     }
 
     @Override

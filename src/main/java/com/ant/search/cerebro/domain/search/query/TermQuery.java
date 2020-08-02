@@ -21,6 +21,6 @@ public class TermQuery extends Query {
 
     @Override
     public QueryType getQueryType() {
-        return QueryType.term;
+        return QueryType.TERM;
     }
 }

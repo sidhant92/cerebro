@@ -22,16 +22,16 @@ public class FilterAdaptor {
         final BoolQuery boolQuery = Optional.ofNullable(outerBoolQuery).orElse(new BoolQuery());
         switch (node.getNodeType()) {
             case STRING_TOKEN:
-                processStringToken((StringToken) node, boolQuery, Optional.ofNullable(queryClause).orElse(QueryClause.must));
+                processStringToken((StringToken) node, boolQuery, Optional.ofNullable(queryClause).orElse(QueryClause.MUST));
                 break;
             case NUMERIC_TOKEN:
-                processNumericToken((NumericToken) node, boolQuery, Optional.ofNullable(queryClause).orElse(QueryClause.must));
+                processNumericToken((NumericToken) node, boolQuery, Optional.ofNullable(queryClause).orElse(QueryClause.MUST));
                 break;
             case NUMERIC_RANGE_TOKEN:
-                processNumericRangeToken((NumericRangeToken) node, boolQuery, Optional.ofNullable(queryClause).orElse(QueryClause.must));
+                processNumericRangeToken((NumericRangeToken) node, boolQuery, Optional.ofNullable(queryClause).orElse(QueryClause.MUST));
                 break;
             case BOOL_EXPRESSION:
-                boolQuery.addQuery(processBooleanExpression((BoolExpression) node), Optional.ofNullable(queryClause).orElse(QueryClause.must));
+                boolQuery.addQuery(processBooleanExpression((BoolExpression) node), Optional.ofNullable(queryClause).orElse(QueryClause.MUST));
                 break;
         }
         return boolQuery;
@@ -39,9 +39,9 @@ public class FilterAdaptor {
 
     private BoolQuery processBooleanExpression(final BoolExpression boolExpression) {
         final BoolQuery boolQuery = new BoolQuery();
-        boolExpression.getAndOperations().forEach(op -> getFilterQuery(op, boolQuery, QueryClause.must));
-        boolExpression.getOrOperations().forEach(op -> getFilterQuery(op, boolQuery, QueryClause.should));
-        boolExpression.getNotOperations().forEach(op -> getFilterQuery(op, boolQuery, QueryClause.must_not));
+        boolExpression.getAndOperations().forEach(op -> getFilterQuery(op, boolQuery, QueryClause.MUST));
+        boolExpression.getOrOperations().forEach(op -> getFilterQuery(op, boolQuery, QueryClause.SHOULD));
+        boolExpression.getNotOperations().forEach(op -> getFilterQuery(op, boolQuery, QueryClause.MUST_NOT));
         return boolQuery;
     }
 
@@ -75,7 +75,7 @@ public class FilterAdaptor {
                         queryClause);
                 break;
             case NOT_EQUAL:
-                boolQuery.addQuery(new TermQuery(numericToken.getField(), numericToken.getValue()), QueryClause.must_not);
+                boolQuery.addQuery(new TermQuery(numericToken.getField(), numericToken.getValue()), QueryClause.MUST_NOT);
                 break;
         }
     }

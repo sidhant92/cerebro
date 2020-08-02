@@ -5,5 +5,5 @@ package com.ant.search.cerebro.constant;
  * @since 04/07/2020
  */
 public enum IndexProvider {
-    elastic
+    ELASTIC
 }

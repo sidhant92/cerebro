@@ -59,7 +59,7 @@ public class MappingService {
     }
 
     private Optional<Map<String, Object>> getAutocompleteSubField(final FieldConfig fieldConfig, final String autocompleteSubFieldSuffix) {
-        if (!fieldConfig.getPrefixSearchEnabled() || fieldConfig.getDataType() != DataType.string) {
+        if (!fieldConfig.getPrefixSearchEnabled() || fieldConfig.getDataType() != DataType.STRING) {
             return Optional.empty();
         }
         final Map<String, Object> fieldLevelMapping = new HashMap<>(getFieldProperties(fieldConfig));
@@ -78,13 +78,13 @@ public class MappingService {
 
     private String mapToElasticDataType(final DataType dataType, final Boolean tokenize) {
         switch (dataType) {
-            case string:
+            case STRING:
                 return tokenize ? "text" : "keyword";
-            case integer:
+            case INTEGER:
                 return "integer";
-            case bool:
+            case BOOL:
                 return "boolean";
-            case decimal:
+            case DECIMAL:
                 return "double";
             default:
                 return "text";

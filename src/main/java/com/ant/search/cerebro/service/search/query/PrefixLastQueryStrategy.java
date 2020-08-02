@@ -39,9 +39,9 @@ public class PrefixLastQueryStrategy extends QueryStrategy {
             final TermQuery lastTermQuery = new TermQuery(getAutocompleteFieldName(field, autocompleteSubFieldSuffix),
                     termQueries.get(termQueries.size() - 1).getValue());
             final List<TermQuery> termQueriesButLast = termQueries.subList(0, termQueries.size() - 1);
-            termQueriesButLast.forEach(termQuery -> innerBoolQuery.addQuery(termQuery, QueryClause.must));
-            innerBoolQuery.addQuery(lastTermQuery, QueryClause.must);
-            boolQuery.addQuery(innerBoolQuery, QueryClause.should);
+            termQueriesButLast.forEach(termQuery -> innerBoolQuery.addQuery(termQuery, QueryClause.MUST));
+            innerBoolQuery.addQuery(lastTermQuery, QueryClause.MUST);
+            boolQuery.addQuery(innerBoolQuery, QueryClause.SHOULD);
         });
 
         return boolQuery;
@@ -53,6 +53,6 @@ public class PrefixLastQueryStrategy extends QueryStrategy {
 
     @Override
     public QueryStrategyType getQueryStrategyType() {
-        return QueryStrategyType.prefix_last;
+        return QueryStrategyType.PREFIX_LAST;
     }
 }

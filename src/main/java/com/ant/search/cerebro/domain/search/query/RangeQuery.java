@@ -29,7 +29,7 @@ public class RangeQuery extends Query {
 
     @Override
     public QueryType getQueryType() {
-        return QueryType.range;
+        return QueryType.RANGE;
     }
 
     public void validate() {

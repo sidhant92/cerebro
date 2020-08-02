@@ -52,6 +52,14 @@ public class IndexSettings implements Mergeable<IndexSettings> {
     private IndexProvider indexProvider;
 
     @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
+    @DynamoDBAttribute (attributeName = "no_of_replicas")
+    private Integer noOfReplicas = 1;
+
+    @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
+    @DynamoDBAttribute (attributeName = "no_of_shards")
+    private Integer noOfShards = 1;
+
+    @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
     private Long createdAt;
 
     @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
@@ -71,7 +79,7 @@ public class IndexSettings implements Mergeable<IndexSettings> {
 
     public void merge(final IndexSettings indexSettings) {
         if (!Objects.isNull(indexSettings.getStorageSettings())) {
-            this.storageSettings = indexSettings.getStorageSettings();
+            this.storageSettings.merge(indexSettings.getStorageSettings());
         }
         if (!Objects.isNull(indexSettings.getSearchSettings())) {
             this.searchSettings = indexSettings.getSearchSettings();

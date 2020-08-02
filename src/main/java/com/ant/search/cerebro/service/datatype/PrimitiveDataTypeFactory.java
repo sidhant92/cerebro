@@ -29,10 +29,10 @@ public class PrimitiveDataTypeFactory {
 
     @PostConstruct
     public void register() {
-        dataTypeFactoryMap.put(DataType.bool, boolDataType);
-        dataTypeFactoryMap.put(DataType.decimal, decimalDataType);
-        dataTypeFactoryMap.put(DataType.integer, integerDataType);
-        dataTypeFactoryMap.put(DataType.string, stringDataType);
+        dataTypeFactoryMap.put(DataType.BOOL, boolDataType);
+        dataTypeFactoryMap.put(DataType.DECIMAL, decimalDataType);
+        dataTypeFactoryMap.put(DataType.INTEGER, integerDataType);
+        dataTypeFactoryMap.put(DataType.STRING, stringDataType);
     }
 
     public PrimitiveAbstractType getDataType(final DataType dataType) {

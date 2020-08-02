@@ -53,10 +53,10 @@ public class DocumentIndexer {
             boolean isValid;
             final Object value = document.get(key);
             switch (fieldConfig.getContainerDataType()) {
-                case primitive:
+                case PRIMITIVE:
                     isValid = primitiveDataTypeFactory.getDataType(fieldConfig.getDataType()).isValid(value);
                     break;
-                case list:
+                case LIST:
                     isValid = isObjectList(value) && ((List) value).stream().allMatch(
                             v -> primitiveDataTypeFactory.getDataType(fieldConfig.getDataType()).isValid(v));
                     break;

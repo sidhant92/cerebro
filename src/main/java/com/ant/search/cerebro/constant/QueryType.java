@@ -5,7 +5,7 @@ package com.ant.search.cerebro.constant;
  * @since 06/07/2020
  */
 public enum QueryType {
-    term,
-    bool,
-    range
+    TERM,
+    BOOL,
+    RANGE
 }

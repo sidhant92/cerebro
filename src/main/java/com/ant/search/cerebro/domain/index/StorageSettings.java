@@ -12,6 +12,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 import com.ant.search.cerebro.constant.AnalyzerType;
 import com.ant.search.cerebro.constant.DataType;
+import com.ant.search.cerebro.domain.Mergeable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,17 +30,18 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamoDBDocument
-public class StorageSettings {
+public class StorageSettings implements Mergeable<StorageSettings> {
     @DynamoDBAttribute (attributeName = "fields")
     @NotEmpty
     @Valid
     private List<FieldConfig> fields;
 
+    @JsonIgnore
     private Map<String, FieldConfig> flattenedFieldConfigMap;
 
     public List<String> filterSearchableStringFields(final List<String> fields) {
         return fields.stream().filter(field -> this.flattenedFieldConfigMap.containsKey(field) && this.flattenedFieldConfigMap.get(field)
-                                                                                                                              .getDataType() == DataType.string && this.flattenedFieldConfigMap
+                                                                                                                              .getDataType() == DataType.STRING && this.flattenedFieldConfigMap
                 .get(field).getSearchable()).collect(Collectors.toList());
     }
 
@@ -68,5 +71,17 @@ public class StorageSettings {
 
     public AnalyzerType getAnalyzerType(final String field) {
         return this.flattenedFieldConfigMap.get(field).getAnalyzer();
+    }
+
+    @Override
+    public void merge(final StorageSettings storageSettings) {
+        final Map<String, FieldConfig> existingFieldConfigs = this.fields.stream().collect(Collectors.toMap(FieldConfig::getName, a -> a));
+        storageSettings.getFields().forEach(fieldConfig -> {
+            if (existingFieldConfigs.containsKey(fieldConfig.getName())) {
+                existingFieldConfigs.get(fieldConfig.getName()).merge(fieldConfig);
+            } else {
+                this.fields.add(fieldConfig);
+            }
+        });
     }
 }

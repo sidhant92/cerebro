@@ -26,9 +26,9 @@ public class QueryStrategyFactory {
 
     @PostConstruct
     public void register() {
-        queryStrategyMap.put(QueryStrategyType.all_match, allMatchQueryStrategy);
-        queryStrategyMap.put(QueryStrategyType.any_match, anyMatchQueryStrategy);
-        queryStrategyMap.put(QueryStrategyType.prefix_last, prefixLastQueryStrategy);
+        queryStrategyMap.put(QueryStrategyType.ALL_MATCH, allMatchQueryStrategy);
+        queryStrategyMap.put(QueryStrategyType.ANY_MATCH, anyMatchQueryStrategy);
+        queryStrategyMap.put(QueryStrategyType.PREFIX_LAST, prefixLastQueryStrategy);
     }
 
     public QueryStrategy getQueryStrategy(final QueryStrategyType queryStrategyType) {

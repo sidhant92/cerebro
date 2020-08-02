@@ -5,5 +5,5 @@ package com.ant.search.cerebro.constant;
  * @since 06/07/2020
  */
 public enum AnalyzerType {
-    standard
+    STANDARD
 }

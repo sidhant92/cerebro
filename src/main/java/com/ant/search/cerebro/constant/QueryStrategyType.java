@@ -5,7 +5,7 @@ package com.ant.search.cerebro.constant;
  * @since 06/07/2020
  */
 public enum  QueryStrategyType {
-    all_match,
-    any_match,
-    prefix_last
+    ALL_MATCH,
+    ANY_MATCH,
+    PREFIX_LAST
 }

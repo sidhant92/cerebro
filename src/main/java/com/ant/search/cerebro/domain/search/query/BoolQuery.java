@@ -26,18 +26,18 @@ public class BoolQuery extends Query {
 
     @Override
     public QueryType getQueryType() {
-        return QueryType.bool;
+        return QueryType.BOOL;
     }
 
     public void addQuery(final Query query, final QueryClause queryClause) {
         switch (queryClause) {
-            case must:
+            case MUST:
                 mustClauses.add(query);
                 break;
-            case should:
+            case SHOULD:
                 shouldClauses.add(query);
                 break;
-            case must_not:
+            case MUST_NOT:
                 mustNotClauses.add(query);
                 break;
             default:

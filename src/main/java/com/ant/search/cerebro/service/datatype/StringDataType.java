@@ -12,7 +12,7 @@ import com.ant.search.cerebro.constant.DataType;
 public class StringDataType extends PrimitiveAbstractType {
     @Override
     public DataType getType() {
-        return DataType.string;
+        return DataType.STRING;
     }
 
     @Override

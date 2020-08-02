@@ -20,7 +20,7 @@ public class AnalyzerFactory {
 
     @PostConstruct
     public void register() {
-        analyzerMap.put(AnalyzerType.standard, standardAnalyzer);
+        analyzerMap.put(AnalyzerType.STANDARD, standardAnalyzer);
     }
 
     public Analyzer getAnalyzer(final AnalyzerType analyzerType) {

@@ -49,7 +49,9 @@ public class DocumentSearchService {
         final Long limit = request.getPerPage();
         final Long offset = (request.getPageNo() - 1) * request.getPerPage();
         final Optional<BoolQuery> filters = filterParser.parse(request.getFilters());
-        final Query query = queryStrategyFactory.getQueryStrategy(request.getQueryStrategy()).getQuery(request, indexSettings.getStorageSettings());
+        final Query query = queryStrategyFactory
+                .getQueryStrategy(Optional.ofNullable(request.getQueryStrategy()).orElse(indexSettings.getSearchSettings().getQueryStrategy()))
+                .getQuery(request, indexSettings.getStorageSettings());
         final DocumentSearchRequest documentSearchRequest = DocumentSearchRequest.builder().limit(limit).offset(offset)
                                                                                  .indexName(request.getIndexName()).query(query)
                                                                                  .filters(filters.orElse(null))

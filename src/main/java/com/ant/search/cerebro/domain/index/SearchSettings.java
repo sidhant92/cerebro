@@ -5,7 +5,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTyped;
-import com.ant.search.cerebro.service.search.query.QueryStrategy;
+import com.ant.search.cerebro.constant.QueryStrategyType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class SearchSettings {
     @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
     @DynamoDBAttribute (attributeName = "query_strategy")
     @NotNull
-    private QueryStrategy queryStrategy;
+    private QueryStrategyType queryStrategy;
 
     @DynamoDBTyped (DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
     @DynamoDBAttribute (attributeName = "max_values_per_facet")

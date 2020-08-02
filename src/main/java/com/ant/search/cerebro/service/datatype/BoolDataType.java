@@ -12,7 +12,7 @@ import com.ant.search.cerebro.constant.DataType;
 public class BoolDataType extends PrimitiveAbstractType {
     @Override
     public DataType getType() {
-        return DataType.bool;
+        return DataType.BOOL;
     }
 
     @Override

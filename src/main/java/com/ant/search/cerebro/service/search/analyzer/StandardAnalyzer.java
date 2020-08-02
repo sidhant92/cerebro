@@ -21,6 +21,6 @@ public class StandardAnalyzer extends Analyzer {
 
     @Override
     public AnalyzerType getType() {
-        return AnalyzerType.standard;
+        return AnalyzerType.STANDARD;
     }
 }

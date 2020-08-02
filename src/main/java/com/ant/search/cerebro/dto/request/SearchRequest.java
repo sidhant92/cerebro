@@ -20,7 +20,7 @@ import lombok.Setter;
 @Setter
 @JsonNaming (PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class SearchRequest {
-    private String query;
+    private String query = "";
 
     private String indexName;
 
@@ -39,5 +39,5 @@ public class SearchRequest {
 
     private Boolean returnFacets = false;
 
-    private QueryStrategyType queryStrategy = QueryStrategyType.all_match;
+    private QueryStrategyType queryStrategy;
 }
