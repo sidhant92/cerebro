@@ -21,6 +21,7 @@ dependencies {
 	implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.6.0'
 	implementation 'com.github.wnameless.json:json-flattener:0.9.0'
 	implementation "com.google.guava:guava:29.0-jre"
+	implementation "com.github.sidhant92:boolparser:1.0.1"
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
