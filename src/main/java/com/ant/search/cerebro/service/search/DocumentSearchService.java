@@ -37,14 +37,14 @@ public class DocumentSearchService {
     private BoolFilterParser filterParser;
 
     public Optional<GetDocumentByIdResponse> getDocumentById(final String indexName, final String id) {
-        final IndexSettings indexSettings = indexSettingsService.get(indexName).orElseThrow(Error.index_settings_not_found.getBuilder()::build);
+        final IndexSettings indexSettings = indexSettingsService.getCached(indexName).orElseThrow(Error.index_settings_not_found.getBuilder()::build);
         final Optional<Map<String, Object>> document = searchServiceFactory.getIndexService(indexSettings.getIndexProvider())
                                                                            .getDocumentById(indexName, id);
         return document.map(doc -> GetDocumentByIdResponse.builder().document(doc).build());
     }
 
     public DocumentSearchResponse searchDocuments(final SearchRequest request) {
-        final IndexSettings indexSettings = indexSettingsService.get(request.getIndexName())
+        final IndexSettings indexSettings = indexSettingsService.getCached(request.getIndexName())
                                                                 .orElseThrow(Error.index_settings_not_found.getBuilder()::build);
         final Long limit = request.getPerPage();
         final Long offset = (request.getPageNo() - 1) * request.getPerPage();

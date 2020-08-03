@@ -100,7 +100,7 @@ public class ElasticSearchService implements SearchService {
         if (!request.getComputeFacets()) {
             return;
         }
-        final IndexSettings indexSettings = indexSettingsService.get(request.getIndexName())
+        final IndexSettings indexSettings = indexSettingsService.getCached(request.getIndexName())
                                                                 .orElseThrow(Error.index_settings_not_found.getBuilder()::build);
         final List<String> aggregationFields = indexSettings.getStorageSettings().getFlattenedFieldConfigMap().entrySet().stream()
                                                             .filter(entry -> entry.getValue().getFacetRequired()).map(Map.Entry::getKey)

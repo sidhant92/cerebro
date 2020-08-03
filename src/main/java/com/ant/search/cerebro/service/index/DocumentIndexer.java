@@ -32,7 +32,7 @@ public class DocumentIndexer {
     private PrimitiveDataTypeFactory primitiveDataTypeFactory;
 
     public Map<String, Object> cleanAndValidateDocument(final Map<String, Object> document, final String indexName) {
-        final IndexSettings indexSettings = indexSettingsService.get(indexName).orElseThrow(Error.index_settings_not_found.getBuilder()::build);
+        final IndexSettings indexSettings = indexSettingsService.getCached(indexName).orElseThrow(Error.index_settings_not_found.getBuilder()::build);
         final Map<String, FieldConfig> flattenedFieldConfigMap = indexSettings.getStorageSettings().getFlattenedFieldConfigMap();
         return cleanAndValidateDocument(document, flattenedFieldConfigMap);
     }
