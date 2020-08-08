@@ -43,6 +43,16 @@ public class AppException extends WebException {
                            .information(builder.information).message(builder.message);
     }
 
+    public Map<String, Object> getParamsMap() {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("error_code", this.errorCode);
+        params.put("message", this.message);
+        params.put("header", this.header);
+        params.put("information", this.information);
+        return params;
+    }
+
+
     public static class AppExceptionBuilder {
         public AppExceptionBuilder information(Map<String, Object> info) {
             this.information = info;

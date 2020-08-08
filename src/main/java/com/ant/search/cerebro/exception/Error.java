@@ -18,7 +18,8 @@ public enum Error {
     unknown_query_type(AppException.builder().statusCode(400).header("Unknown Query Type").message("Unknown Query Type")),
     unknown_error_occurred(AppException.builder().statusCode(500).header("Unknown Error Occurred").message("Unknown Error Occurred")),
     invalid_range_query(AppException.builder().statusCode(400).header("Invalid Range Query").message("Invalid Range Query")),
-    invalid_operator(AppException.builder().statusCode(400).header("Invalid Operator").message("Invalid Operator"));
+    invalid_operator(AppException.builder().statusCode(400).header("Invalid Operator").message("Invalid Operator")),
+    invalid_filter_expression(AppException.builder().statusCode(400).header("Invalid Filter Expression").message("Invalid Filter Expression"));
 
     private AppException.AppExceptionBuilder builder;
 
