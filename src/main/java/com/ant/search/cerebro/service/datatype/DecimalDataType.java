@@ -17,6 +17,6 @@ public class DecimalDataType extends PrimitiveAbstractType {
 
     @Override
     public boolean isValid(final Object value) {
-        return !Objects.isNull(value) && value instanceof Double;
+        return !Objects.isNull(value) && (value instanceof Double || value instanceof Float);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.ant.search.cerebro.constant.DataType;
 import com.ant.search.cerebro.domain.index.FieldConfig;
 import com.ant.search.cerebro.domain.index.IndexSettings;
+import com.ant.search.cerebro.service.index.field.fixed.FixedFieldFactory;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -25,6 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 public class MappingService {
     @Autowired
     private RestHighLevelClient elasticClient;
+
+    @Autowired
+    private FixedFieldFactory fixedFieldFactory;
 
     @Value ("${autocomplete.sub_field_suffix}")
     private String autocompleteSubFieldSuffix;
@@ -54,6 +58,7 @@ public class MappingService {
                 fieldMappings.put(fieldConfig.getName(), fieldLevelMapping);
             }
         });
+        fixedFieldFactory.getFixedFields().forEach(fixedField -> fieldMappings.putAll(fixedField.getElasticMapping()));
         mappingData.put("properties", fieldMappings);
         return mappingData;
     }
