@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ant.search.cerebro.domain.index.IndexSettings;
 import com.ant.search.cerebro.domain.search.query.BoolQuery;
+import com.ant.search.cerebro.domain.search.query.Query;
 import com.ant.search.cerebro.dto.internal.DocumentSearchRequest;
 import com.ant.search.cerebro.dto.response.DocumentSearchResponse;
 import com.ant.search.cerebro.exception.Error;
@@ -85,10 +86,10 @@ public class ElasticSearchService implements SearchService {
         return searchSourceBuilder;
     }
 
-    private void setFilters(final SearchSourceBuilder searchSourceBuilder, final BoolQuery boolQuery) {
-        if (!Objects.isNull(boolQuery)) {
+    private void setFilters(final SearchSourceBuilder searchSourceBuilder, final Query filterQuery) {
+        if (!Objects.isNull(filterQuery)) {
             final QueryBuilder query = searchSourceBuilder.query();
-            final QueryBuilder filter = queryAdaptor.getElasticQuery(boolQuery);
+            final QueryBuilder filter = queryAdaptor.getElasticQuery(filterQuery);
             final BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
             boolQueryBuilder.must(query);
             boolQueryBuilder.filter(filter);

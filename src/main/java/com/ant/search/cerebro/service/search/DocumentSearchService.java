@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.ant.search.cerebro.constant.QueryClause;
 import com.ant.search.cerebro.domain.index.IndexSettings;
 import com.ant.search.cerebro.domain.search.query.BoolQuery;
 import com.ant.search.cerebro.domain.search.query.Query;
@@ -48,7 +49,7 @@ public class DocumentSearchService {
                                                                 .orElseThrow(Error.index_settings_not_found.getBuilder()::build);
         final Long limit = request.getPerPage();
         final Long offset = (request.getPageNo() - 1) * request.getPerPage();
-        final Optional<BoolQuery> filters = filterParser.parse(request.getFilters());
+        final Optional<? extends Query> filters = getFilterQuery(request);
         final Query query = queryStrategyFactory
                 .getQueryStrategy(Optional.ofNullable(request.getQueryStrategy()).orElse(indexSettings.getSearchSettings().getQueryStrategy()))
                 .getQuery(request, indexSettings.getStorageSettings());
@@ -58,5 +59,19 @@ public class DocumentSearchService {
                                                                                  .computeFacets(request.getReturnFacets())
                                                                                  .facetFields(request.getFacetFields()).build();
         return searchServiceFactory.getIndexService(indexSettings.getIndexProvider()).searchDocuments(documentSearchRequest);
+    }
+
+    private Optional<? extends Query> getFilterQuery(final SearchRequest searchRequest) {
+        final Optional<BoolQuery> filters = filterParser.parse(searchRequest.getFilters());
+        if (filters.isPresent()) {
+            getGeoQuery(searchRequest).ifPresent(geoQuery -> filters.get().addQuery(geoQuery, QueryClause.MUST));
+            return filters;
+        } else {
+            return getGeoQuery(searchRequest);
+        }
+    }
+
+    private Optional<Query> getGeoQuery(final SearchRequest searchRequest) {
+        return Optional.ofNullable(searchRequest.getGeoQueryType()).map(queryType -> queryType.getQuery(searchRequest));
     }
 }

@@ -7,5 +7,6 @@ package com.ant.search.cerebro.constant;
 public enum QueryType {
     TERM,
     BOOL,
-    RANGE
+    RANGE,
+    GEO_AROUND_CENTER
 }
