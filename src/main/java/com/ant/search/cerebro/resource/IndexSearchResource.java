@@ -4,6 +4,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.ant.search.cerebro.dto.request.SearchRequest;
 import com.ant.search.cerebro.dto.response.DocumentSearchResponse;
@@ -27,6 +29,12 @@ public class IndexSearchResource {
 
     @GetMapping ("/v1/index/{indexName}/search")
     public DocumentSearchResponse searchDocuments(@PathVariable final String indexName, @Valid final SearchRequest searchRequest) {
+        searchRequest.setIndexName(indexName);
+        return documentSearchService.searchDocuments(searchRequest);
+    }
+
+    @PostMapping ("/v1/index/{indexName}/search")
+    public DocumentSearchResponse searchDocumentsPost(@PathVariable final String indexName, @RequestBody @Valid final SearchRequest searchRequest) {
         searchRequest.setIndexName(indexName);
         return documentSearchService.searchDocuments(searchRequest);
     }
