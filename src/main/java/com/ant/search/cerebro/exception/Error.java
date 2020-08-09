@@ -20,7 +20,8 @@ public enum Error {
     invalid_range_query(AppException.builder().statusCode(400).header("Invalid Range Query").message("Invalid Range Query")),
     invalid_operator(AppException.builder().statusCode(400).header("Invalid Operator").message("Invalid Operator")),
     invalid_request(AppException.builder().statusCode(400).header("Invalid Request").message("Invalid Request")),
-    invalid_filter_expression(AppException.builder().statusCode(400).header("Invalid Filter Expression").message("Invalid Filter Expression"));
+    invalid_filter_expression(AppException.builder().statusCode(400).header("Invalid Filter Expression").message("Invalid Filter Expression")),
+    invalid_sort_param(AppException.builder().statusCode(400).header("Invalid Sort Param").message("Invalid Sort Param"));
 
     private AppException.AppExceptionBuilder builder;
 
