@@ -1,12 +1,14 @@
 package com.ant.search.cerebro.service.search.elastic;
 
 import java.util.Optional;
+import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.springframework.stereotype.Service;
 import com.ant.search.cerebro.domain.search.query.BoolQuery;
+import com.ant.search.cerebro.domain.search.query.GeoAroundCenterQuery;
 import com.ant.search.cerebro.domain.search.query.Query;
 import com.ant.search.cerebro.domain.search.query.RangeQuery;
 import com.ant.search.cerebro.domain.search.query.TermQuery;
@@ -21,6 +23,7 @@ public class QueryAdaptor {
     public QueryBuilder getElasticQuery(final Query query) {
         switch (query.getQueryType()) {
             case TERM:
+            case GEO_AROUND_CENTER:
             case RANGE:
                 return getPrimitiveQuery(query);
             case BOOL:
@@ -55,6 +58,8 @@ public class QueryAdaptor {
                 return QueryBuilders.termQuery(termQuery.getField(), termQuery.getValue());
             case RANGE:
                 return rangeQueryConverter((RangeQuery) query);
+            case GEO_AROUND_CENTER:
+                return getGeoCenterQuery((GeoAroundCenterQuery) query);
             default:
                 throw new RuntimeException();
         }
@@ -68,5 +73,11 @@ public class QueryAdaptor {
         Optional.ofNullable(rangeQuery.getUpperBound())
                 .ifPresent(upperBound -> rangeQueryBuilder.to(upperBound, rangeQuery.getUpperBoundInclusive()));
         return rangeQueryBuilder;
+    }
+
+    private QueryBuilder getGeoCenterQuery(final GeoAroundCenterQuery geoAroundCenterQuery) {
+        return QueryBuilders.geoDistanceQuery(geoAroundCenterQuery.getField())
+                            .point(geoAroundCenterQuery.getCenterLatitude(), geoAroundCenterQuery.getCenterLongitude())
+                            .distance(geoAroundCenterQuery.getMaxRadius().doubleValue(), DistanceUnit.METERS);
     }
 }

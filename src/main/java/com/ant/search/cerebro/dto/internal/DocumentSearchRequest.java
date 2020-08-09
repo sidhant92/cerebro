@@ -27,7 +27,7 @@ public class DocumentSearchRequest {
 
     private Long limit;
 
-    private BoolQuery filters;
+    private Query filters;
 
     private Boolean computeFacets;
 

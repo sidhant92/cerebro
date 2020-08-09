@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import com.ant.search.cerebro.constant.GeoQueryType;
 import com.ant.search.cerebro.constant.QueryStrategyType;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -40,4 +41,12 @@ public class SearchRequest {
     private Boolean returnFacets = false;
 
     private QueryStrategyType queryStrategy;
+
+    private GeoQueryType geoQueryType;
+
+    private Integer maxRadius;
+
+    private Double centerPointLatitude;
+
+    private Double centerPointLongitude;
 }

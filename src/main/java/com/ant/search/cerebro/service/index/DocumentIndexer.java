@@ -11,6 +11,7 @@ import com.ant.search.cerebro.domain.index.IndexSettings;
 import com.ant.search.cerebro.exception.Error;
 import com.ant.search.cerebro.service.IndexSettingsService;
 import com.ant.search.cerebro.service.datatype.PrimitiveDataTypeFactory;
+import com.ant.search.cerebro.service.index.field.fixed.FixedFieldFactory;
 import com.ant.search.cerebro.util.JsonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,9 @@ public class DocumentIndexer {
     @Autowired
     private PrimitiveDataTypeFactory primitiveDataTypeFactory;
 
+    @Autowired
+    private FixedFieldFactory fixedFieldFactory;
+
     public Map<String, Object> cleanAndValidateDocument(final Map<String, Object> document, final String indexName) {
         final IndexSettings indexSettings = indexSettingsService.getCached(indexName).orElseThrow(Error.index_settings_not_found.getBuilder()::build);
         final Map<String, FieldConfig> flattenedFieldConfigMap = indexSettings.getStorageSettings().getFlattenedFieldConfigMap();
@@ -40,6 +44,7 @@ public class DocumentIndexer {
     private Map<String, Object> cleanAndValidateDocument(final Map<String, Object> document, final Map<String, FieldConfig> flattenedFieldConfig) {
         final Map<String, Object> flattenedDocument = JsonUtils.flattenJson(document, objectMapper);
         filterExtraKeys(flattenedDocument, flattenedFieldConfig);
+        fixedFieldFactory.getFixedFields().forEach(fixedField -> fixedField.isValid(document));
         if (!isDocumentValid(flattenedDocument, flattenedFieldConfig)) {
             log.error("Document is not Valid");
             throw Error.document_not_valid.getBuilder().build();
@@ -49,6 +54,9 @@ public class DocumentIndexer {
 
     private Boolean isDocumentValid(final Map<String, Object> document, final Map<String, FieldConfig> flattenedFieldConfig) {
         return document.keySet().stream().allMatch(key -> {
+            if (fixedFieldFactory.getFixedFieldsNames().stream().anyMatch(key::startsWith)) {
+                return true;
+            }
             final FieldConfig fieldConfig = flattenedFieldConfig.get(key);
             boolean isValid;
             final Object value = document.get(key);
@@ -72,7 +80,11 @@ public class DocumentIndexer {
     }
 
     private void filterExtraKeys(final Map<String, Object> document, final Map<String, FieldConfig> flattenedFieldConfig) {
-        final Set<String> extraKeys = document.keySet().stream().filter(key -> !flattenedFieldConfig.containsKey(key)).collect(Collectors.toSet());
+        final Set<String> extraKeys = document.keySet().stream()
+                                              .filter(key -> !flattenedFieldConfig.containsKey(key) && fixedFieldFactory.getFixedFieldsNames()
+                                                                                                                         .stream()
+                                                                                                                         .noneMatch(key::startsWith))
+                                              .collect(Collectors.toSet());
         extraKeys.forEach(document::remove);
     }
 }
