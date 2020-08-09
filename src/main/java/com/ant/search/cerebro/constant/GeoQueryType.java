@@ -31,10 +31,10 @@ public enum GeoQueryType {
         @Override
         public Query getQuery(final SearchRequest request) {
             validate(request);
-            return GeoBoundingBoxQuery.builder().field(GeoLocation.FIELD_NAME).topLeftLatitude(request.getBoundingBox().getTopLeftLatitude())
-                                      .topLeftLongitude(request.getBoundingBox().getTopLeftLongitude())
-                                      .bottomRightLatitude(request.getBoundingBox().getBottomRightLatitude())
-                                      .bottomRightLongitude(request.getBoundingBox().getBottomRightLongitude()).build();
+            return GeoBoundingBoxQuery.builder().field(GeoLocation.FIELD_NAME).topLeftLatitude(request.getBoundingBox().getTopLeftLat())
+                                      .topLeftLongitude(request.getBoundingBox().getTopLeftLon())
+                                      .bottomRightLatitude(request.getBoundingBox().getBottomRightLat())
+                                      .bottomRightLongitude(request.getBoundingBox().getBottomRightLon()).build();
         }
 
         private void validate(final SearchRequest request) {

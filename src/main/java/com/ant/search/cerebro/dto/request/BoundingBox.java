@@ -14,14 +14,14 @@ import lombok.Setter;
 @Setter
 public class BoundingBox {
     @NotNull
-    private Double topLeftLatitude;
+    private Double topLeftLat;
 
     @NotNull
-    private Double topLeftLongitude;
+    private Double topLeftLon;
 
     @NotNull
-    private Double bottomRightLatitude;
+    private Double bottomRightLat;
 
     @NotNull
-    private Double bottomRightLongitude;
+    private Double bottomRightLon;
 }
