@@ -2,12 +2,11 @@ package com.ant.search.cerebro.dto.request;
 
 import java.util.Collections;
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import com.ant.search.cerebro.constant.GeoQueryType;
 import com.ant.search.cerebro.constant.QueryStrategyType;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +18,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@JsonNaming (PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class SearchRequest {
     private String query = "";
 
@@ -46,7 +44,9 @@ public class SearchRequest {
 
     private Integer maxRadius;
 
-    private Double centerPointLatitude;
+    @Valid
+    private CenterPoint centerPoint;
 
-    private Double centerPointLongitude;
+    @Valid
+    private BoundingBox boundingBox;
 }

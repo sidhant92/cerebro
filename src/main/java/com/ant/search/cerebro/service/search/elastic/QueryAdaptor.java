@@ -9,6 +9,7 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.springframework.stereotype.Service;
 import com.ant.search.cerebro.domain.search.query.BoolQuery;
 import com.ant.search.cerebro.domain.search.query.GeoAroundCenterQuery;
+import com.ant.search.cerebro.domain.search.query.GeoBoundingBoxQuery;
 import com.ant.search.cerebro.domain.search.query.Query;
 import com.ant.search.cerebro.domain.search.query.RangeQuery;
 import com.ant.search.cerebro.domain.search.query.TermQuery;
@@ -24,6 +25,7 @@ public class QueryAdaptor {
         switch (query.getQueryType()) {
             case TERM:
             case GEO_AROUND_CENTER:
+            case GEO_BOUNDING_BOX:
             case RANGE:
                 return getPrimitiveQuery(query);
             case BOOL:
@@ -55,11 +57,13 @@ public class QueryAdaptor {
         switch (query.getQueryType()) {
             case TERM:
                 final TermQuery termQuery = (TermQuery) query;
-                return QueryBuilders.termQuery(termQuery.getField(), termQuery.getValue());
+                return QueryBuilders.matchQuery(termQuery.getField(), termQuery.getValue());
             case RANGE:
                 return rangeQueryConverter((RangeQuery) query);
             case GEO_AROUND_CENTER:
                 return getGeoCenterQuery((GeoAroundCenterQuery) query);
+            case GEO_BOUNDING_BOX:
+                return getGeoBoundingBoxQuery((GeoBoundingBoxQuery) query);
             default:
                 throw new RuntimeException();
         }
@@ -79,5 +83,11 @@ public class QueryAdaptor {
         return QueryBuilders.geoDistanceQuery(geoAroundCenterQuery.getField())
                             .point(geoAroundCenterQuery.getCenterLatitude(), geoAroundCenterQuery.getCenterLongitude())
                             .distance(geoAroundCenterQuery.getMaxRadius().doubleValue(), DistanceUnit.METERS);
+    }
+
+    private QueryBuilder getGeoBoundingBoxQuery(final GeoBoundingBoxQuery geoBoundingBoxQuery) {
+        return QueryBuilders.geoBoundingBoxQuery(geoBoundingBoxQuery.getField())
+                            .setCorners(geoBoundingBoxQuery.getTopLeftLatitude(), geoBoundingBoxQuery.getTopLeftLongitude(),
+                                    geoBoundingBoxQuery.getBottomRightLatitude(), geoBoundingBoxQuery.getBottomRightLongitude());
     }
 }
