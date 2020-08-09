@@ -8,7 +8,7 @@ Cerebro allows anyone who wants to have search functionality enabled but does no
 * Gradle
 * ElasticSearch 7.6.0
 
-A Dynamo DB table `index_settings`
+A Dynamo DB table `index_settings` with `index_name` being the hash key
 
 ### ENV Variables
 * AWS_ACCESS_KEY
@@ -25,4 +25,4 @@ AWS Keys should have access to table `index_settings`
 
 
 ### Usage
-Refer to WIKI
+Refer to [WIKI](https://github.com/sidhant92/cerebro/wiki)

@@ -8,5 +8,6 @@ public enum QueryType {
     TERM,
     BOOL,
     RANGE,
-    GEO_AROUND_CENTER
+    GEO_AROUND_CENTER,
+    GEO_BOUNDING_BOX
 }
