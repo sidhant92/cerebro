@@ -1,10 +1,13 @@
 package com.ant.search.cerebro.service.search;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.ant.search.cerebro.constant.DataType;
 import com.ant.search.cerebro.constant.QueryClause;
+import com.ant.search.cerebro.domain.index.FieldConfig;
 import com.ant.search.cerebro.domain.index.IndexSettings;
 import com.ant.search.cerebro.domain.search.query.BoolQuery;
 import com.ant.search.cerebro.domain.search.query.Query;
@@ -50,6 +53,7 @@ public class DocumentSearchService {
         final Long limit = request.getPerPage();
         final Long offset = (request.getPageNo() - 1) * request.getPerPage();
         final Optional<? extends Query> filters = getFilterQuery(request);
+        validateSort(request);
         final Query query = queryStrategyFactory
                 .getQueryStrategy(Optional.ofNullable(request.getQueryStrategy()).orElse(indexSettings.getSearchSettings().getQueryStrategy()))
                 .getQuery(request, indexSettings.getStorageSettings());
@@ -57,8 +61,26 @@ public class DocumentSearchService {
                                                                                  .indexName(request.getIndexName()).query(query)
                                                                                  .filters(filters.orElse(null))
                                                                                  .computeFacets(request.getReturnFacets())
-                                                                                 .facetFields(request.getFacetFields()).build();
+                                                                                 .facetFields(request.getFacetFields()).sortBy(request.getSortBy())
+                                                                                 .sortOrder(request.getSortOrder())
+                                                                                 .sortByDistance(request.getSortByDistance())
+                                                                                 .centerPoint(request.getCenterPoint()).build();
         return searchServiceFactory.getIndexService(indexSettings.getIndexProvider()).searchDocuments(documentSearchRequest);
+    }
+
+    private void validateSort(final SearchRequest request) {
+        if (request.getSortByDistance()) {
+            if (Objects.isNull(request.getCenterPoint())) {
+                throw Error.invalid_sort_param.getBuilder().build();
+            }
+        }
+        final IndexSettings indexSettings = indexSettingsService.getCached(request.getIndexName())
+                                                                .orElseThrow(Error.index_settings_not_found.getBuilder()::build);
+        final FieldConfig fieldConfig = Optional.ofNullable(indexSettings.getStorageSettings().getFlattenedFieldConfigMap().get(request.getSortBy()))
+                                                .orElseThrow(Error.invalid_sort_param.getBuilder()::build);
+        if (fieldConfig.getDataType() == DataType.STRING && fieldConfig.getTokenize()) {
+            throw Error.invalid_sort_param.getBuilder().build();
+        }
     }
 
     private Optional<? extends Query> getFilterQuery(final SearchRequest searchRequest) {

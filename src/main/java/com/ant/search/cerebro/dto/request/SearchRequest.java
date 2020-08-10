@@ -7,6 +7,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import com.ant.search.cerebro.constant.GeoQueryType;
 import com.ant.search.cerebro.constant.QueryStrategyType;
+import com.ant.search.cerebro.constant.SortOrder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -49,4 +50,10 @@ public class SearchRequest {
 
     @Valid
     private BoundingBox boundingBox;
+
+    private String sortBy;
+
+    private SortOrder sortOrder = SortOrder.DESC;
+
+    private Boolean sortByDistance = false;
 }

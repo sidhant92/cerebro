@@ -46,7 +46,7 @@ public class IndexSettingsService {
     public IndexSettings update(final IndexSettings indexSettings) {
         final IndexSettings existingSettings = get(indexSettings.getIndexName()).orElseThrow(Error.index_settings_not_found.getBuilder()::build);
         existingSettings.merge(indexSettings);
-        indexSettings.preUpdate();
+        existingSettings.preUpdate();
         indexSettingsDao.updateOrAdd(existingSettings);
         indexSettingsCache.refresh(indexSettings.getIndexName());
         return existingSettings;
