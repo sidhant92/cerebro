@@ -1,6 +1,5 @@
 package com.ant.search.cerebro.dto.response;
 
-import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,19 +9,15 @@ import lombok.Setter;
 
 /**
  * @author sidhant.aggarwal
- * @since 06/07/2020
+ * @since 10/08/2020
  */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class DocumentSearchResponse {
-    private Long totalHits;
+public class Document {
+    private Map<String, Object> source;
 
-    private Boolean nextPage;
-
-    private List<Document> documents;
-
-    private Map<String, Map<String, Long>> facets;
+    private Map<String, Object> metaData;
 }

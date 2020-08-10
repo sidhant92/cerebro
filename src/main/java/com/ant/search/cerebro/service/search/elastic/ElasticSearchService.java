@@ -1,6 +1,7 @@
 package com.ant.search.cerebro.service.search.elastic;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,21 +17,23 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ant.search.cerebro.domain.index.IndexSettings;
-import com.ant.search.cerebro.domain.search.query.BoolQuery;
 import com.ant.search.cerebro.domain.search.query.Query;
 import com.ant.search.cerebro.dto.internal.DocumentSearchRequest;
+import com.ant.search.cerebro.dto.response.Document;
 import com.ant.search.cerebro.dto.response.DocumentSearchResponse;
 import com.ant.search.cerebro.exception.Error;
 import com.ant.search.cerebro.service.IndexSettingsService;
+import com.ant.search.cerebro.service.index.field.fixed.GeoLocation;
 import com.ant.search.cerebro.service.search.SearchService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -83,6 +86,7 @@ public class ElasticSearchService implements SearchService {
         setFilters(searchSourceBuilder, request.getFilters());
         setAggregations(request, searchSourceBuilder);
         setPagination(request, searchSourceBuilder);
+        setSort(request, searchSourceBuilder);
         return searchSourceBuilder;
     }
 
@@ -94,6 +98,17 @@ public class ElasticSearchService implements SearchService {
             boolQueryBuilder.must(query);
             boolQueryBuilder.filter(filter);
             searchSourceBuilder.query(boolQueryBuilder);
+        }
+    }
+
+    private void setSort(final DocumentSearchRequest request, final SearchSourceBuilder searchSourceBuilder) {
+        if (request.getSortByDistance()) {
+            searchSourceBuilder
+                    .sort(SortBuilders.geoDistanceSort(GeoLocation.FIELD_NAME, request.getCenterPoint().getLat(), request.getCenterPoint().getLon())
+                                      .order(SortOrder.fromString(request.getSortOrder().name())));
+        } else {
+            Optional.ofNullable(request.getSortBy())
+                    .ifPresent(sortBy -> searchSourceBuilder.sort(sortBy, SortOrder.fromString(request.getSortOrder().name())));
         }
     }
 
@@ -123,10 +138,20 @@ public class ElasticSearchService implements SearchService {
     }
 
     private DocumentSearchResponse mapToSearchResponse(final DocumentSearchRequest request, final SearchResponse response) {
-        List<Map<String, Object>> results = Arrays.stream(response.getHits().getHits()).map(SearchHit::getSourceAsMap).collect(Collectors.toList());
+        final List<Document> documents = mapElasticResponseToDocument(request, response);
         final Boolean nextPage = response.getHits().getTotalHits().value > request.getLimit() + request.getOffset();
-        return DocumentSearchResponse.builder().documents(results).nextPage(nextPage).totalHits(response.getHits().getTotalHits().value)
+        return DocumentSearchResponse.builder().documents(documents).nextPage(nextPage).totalHits(response.getHits().getTotalHits().value)
                                      .facets(getFacets(response).orElse(null)).build();
+    }
+
+    private List<Document> mapElasticResponseToDocument(final DocumentSearchRequest request, final SearchResponse response) {
+        return Arrays.stream(response.getHits().getHits()).map(d -> {
+            final Map<String, Object> metaData = new HashMap<>();
+            if (request.getSortByDistance()) {
+                metaData.put("distance", Arrays.stream(d.getSortValues()).findFirst().orElse(null));
+            }
+            return Document.builder().source(d.getSourceAsMap()).metaData(metaData).build();
+        }).collect(Collectors.toList());
     }
 
     private Optional<Map<String, Map<String, Long>>> getFacets(final SearchResponse response) {
