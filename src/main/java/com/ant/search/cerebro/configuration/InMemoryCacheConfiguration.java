@@ -17,7 +17,7 @@ public class InMemoryCacheConfiguration {
     @Value ("${cache.memory.maxsize}")
     private Integer cacheMaxSize;
 
-    @Value ("${cache.memory.expiry_after_write_minutes}")
+    @Value ("${cache.expiry_after_write_minutes}")
     private Integer expiryAfterWriteInMinutes;
 
     @Value ("${elastic.refresh_after_write_minutes}")
