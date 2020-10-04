@@ -73,6 +73,10 @@ public class DocumentSearchService {
             if (Objects.isNull(request.getCenterPoint())) {
                 throw Error.invalid_sort_param.getBuilder().build();
             }
+            return;
+        }
+        if (Objects.isNull(request.getSortBy())) {
+            return;
         }
         final IndexSettings indexSettings = indexSettingsService.getCached(request.getIndexName())
                                                                 .orElseThrow(Error.index_settings_not_found.getBuilder()::build);
